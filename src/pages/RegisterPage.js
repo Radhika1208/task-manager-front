@@ -1,34 +1,67 @@
-import { useState } from "react";
-import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios"; // ✅ Import axios for API call
+import "./LoginPage.css";
 
 const RegisterPage = () => {
-  const [username, setUsername] = useState("");
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
   const handleRegister = async (e) => {
-    e.preventDefault();
+    e.preventDefault(); // ✅ Prevents page refresh
+
     try {
-      await axios.post("http://localhost:5000/api/auth/register", { username, email, password });
+      const response = await axios.post("http://localhost:5000/api/auth/register", {
+        username: name, // ✅ Backend expects "username", not "name"
+        email,
+        password,
+      });
+
+      console.log("Registration successful:", response.data);
       alert("Registration successful! Please login.");
-      navigate("/login");
+      navigate("/login"); // ✅ Redirect to login after successful registration
     } catch (error) {
-      alert("Registration failed");
+      console.error("Registration failed:", error.response?.data?.message || error.message);
+      alert("Registration Failed: " + (error.response?.data?.message || "Try again"));
     }
   };
 
   return (
-    <div className="flex items-center justify-center h-screen bg-gray-100">
-      <div className="bg-white p-8 rounded-lg shadow-md w-96">
-        <h2 className="text-2xl font-bold text-center mb-6">Register</h2>
+    <div className="auth-container">
+      <div className="auth-box">
+        <h2>Register</h2>
         <form onSubmit={handleRegister}>
-          <input type="text" placeholder="Username" className="border p-2 w-full mb-4" value={username} onChange={(e) => setUsername(e.target.value)} />
-          <input type="email" placeholder="Email" className="border p-2 w-full mb-4" value={email} onChange={(e) => setEmail(e.target.value)} />
-          <input type="password" placeholder="Password" className="border p-2 w-full mb-4" value={password} onChange={(e) => setPassword(e.target.value)} />
-          <button type="submit" className="bg-green-600 text-white p-2 w-full">Register</button>
+          <input
+            type="text"
+            placeholder="Full Name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            required
+            className="input-field"
+          />
+          <input
+            type="email"
+            placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+            className="input-field"
+          />
+          <input
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+            className="input-field"
+          />
+          <button type="submit" className="auth-button">Register</button>
         </form>
+        <p className="auth-link">
+          Already have an account? <Link to="/login">Login</Link>
+        </p>
       </div>
     </div>
   );

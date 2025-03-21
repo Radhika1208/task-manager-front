@@ -1,15 +1,24 @@
-import { Link } from "react-router-dom";
+import React from "react";
+import { useNavigate } from "react-router-dom";
+import "./Header.css";
 
-const Header = () => {
+const Header = ({ isAuthenticated, setIsAuthenticated }) => {
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    setIsAuthenticated(false);
+    navigate("/login");
+  };
+
   return (
-    <header className="bg-blue-600 p-4 text-white">
-      <div className="container mx-auto flex justify-between">
-        <h1 className="text-xl font-bold">Task Manager</h1>
-        <nav>
-          <Link to="/dashboard" className="mr-4">Dashboard</Link>
-          <Link to="/login">Logout</Link>
-        </nav>
-      </div>
+    <header className="header">
+      <div className="logo">📝 Task Manager</div>
+      {isAuthenticated && (
+        <button className="logout-button" onClick={handleLogout}>
+          Logout
+        </button>
+      )}
     </header>
   );
 };
